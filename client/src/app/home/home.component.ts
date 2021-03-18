@@ -1,4 +1,3 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { AccountService } from '../_services/account.service';
 
@@ -9,22 +8,14 @@ import { AccountService } from '../_services/account.service';
 })
 export class HomeComponent implements OnInit {
   registerMode = false;
-  users: any;
 
-  constructor(private http: HttpClient, public accountService: AccountService) { }
+  constructor(public accountService: AccountService) { }
 
   ngOnInit(): void {
-    this.getUsers();
   }
 
   registerToggle() {
     this.registerMode = !this.registerMode;
-  }
-
-  getUsers() {
-    this.http.get('https://localhost:5001/api/users').subscribe(
-      users => this.users = users,
-      error => console.log(error));
   }
 
   cancelRegisterMode(event: boolean) {
