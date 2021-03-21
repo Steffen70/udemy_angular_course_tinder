@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using API.DTOs;
 using API.Entities;
@@ -14,5 +15,6 @@ namespace API.Interfaces
         Task<AppUser> GetUserByUsernameAsync(string username);
         Task<IEnumerable<MemberDto>> GetMembersAsync();
         Task<MemberDto> GetMemberAsync(string username);
+        Task<AppUser> GetAppUserByClaimsPrincipalAsync(ClaimsPrincipal user);
     }
 }

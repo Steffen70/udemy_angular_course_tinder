@@ -7,6 +7,7 @@ using API.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using System.Security.Claims;
 
 namespace API.Data
 {
@@ -18,6 +19,12 @@ namespace API.Data
         {
             _mapper = mapper;
             _context = context;
+        }
+
+        public async Task<AppUser> GetAppUserByClaimsPrincipalAsync(ClaimsPrincipal user)
+        {
+            var username = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            return await this.GetUserByUsernameAsync(username);
         }
 
         public async Task<MemberDto> GetMemberAsync(string username)

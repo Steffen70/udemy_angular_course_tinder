@@ -1,0 +1,33 @@
+img.img-thumbnail {
+    height: 100px;
+    min-width: 100px !important;
+    margin-bottom: 2px;
+}
+
+.nv-file-over {
+    border-color: var(--orange);
+    color: var(--orange);
+}
+
+input[type=file] {
+    color: transparent;
+}
+
+.photo-icons {
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin-right: auto;
+    margin-left: auto;
+    opacity: 0;
+    bottom: -30%;
+}
+
+.member-photos:hover .photo-icons {
+    opacity: 1;
+    bottom: 0;
+}
+
+.animate {
+    transition: all 0.3s ease-in-out;
+}
