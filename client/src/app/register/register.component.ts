@@ -10,25 +10,32 @@ import { AccountService } from '../_services/account.service';
 })
 export class RegisterComponent implements OnInit {
   @Output() cancelRegister = new EventEmitter();
-  registerForm: FormGroup;
-
   model: any = {}
+  registerForm: FormGroup;
+  maxDate: Date;
 
   constructor(private accountService: AccountService, private fb: FormBuilder, private router: Router) { }
 
   ngOnInit(): void {
     this.initializeForm();
+    this.maxDate = new Date();
+    this.maxDate.setFullYear(this.maxDate.getFullYear() -18);
   }
 
   initializeForm() {
     this.registerForm = this.fb.group({
+      gender: ['male'],
       username: ['', Validators.required],
+      knownAs: ['', Validators.required],
+      dateOfBirth: ['', Validators.required],
+      city: ['', Validators.required],
+      country: ['', Validators.required],
       password: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(8)]],
       confirmPassword: ['', [Validators.required, this.matchValues('password')]]
     });
 
-    // this.registerForm.controls.password.valueChanges.subscribe(() =>
-    //   this.registerForm.controls.confirmPassword.updateValueAndValidity())
+    this.registerForm.controls.password.valueChanges.subscribe(() =>
+      this.registerForm.controls.confirmPassword.updateValueAndValidity())
   }
 
   matchValues(matchTo: string): ValidatorFn {
