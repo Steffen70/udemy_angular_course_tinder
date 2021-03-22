@@ -4,6 +4,7 @@ import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { Member } from '../_models/member';
+import { AccountService } from './account.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,11 @@ export class MembersService {
   baseUrl = environment.apiUrl;
   members: Member[] = [];
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private accountService: AccountService) {
+    accountService.currentUser$.subscribe(user => {
+      if (user === null) this.members = [];
+    });
+  }
 
   getMembers() {
     if (this.members.length > 0) return of(this.members);
