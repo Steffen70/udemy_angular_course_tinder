@@ -33,15 +33,17 @@ export class PhotoEditorComponent implements OnInit {
   }
 
   setMainPhoto(photo: Photo) {
-    this.membersService.setMainPhoto(photo.id).subscribe(() => {
-      this.user.photoUrl = photo.url;
-      this.accountService.setCurrentUser(this.user);
-      this.member.photoUrl = photo.url;
-      this.member.photos.forEach(p => {
-        if (p.isMain) p.isMain = false;
-        else if (p.id === photo.id) p.isMain = true;
-      })
-    })
+    this.membersService.setMainPhoto(photo.id).subscribe(() => this.setMainPhotoLocal(photo));
+  }
+
+  setMainPhotoLocal(photo: Photo) {
+    this.user.photoUrl = photo.url;
+    this.accountService.setCurrentUser(this.user);
+    this.member.photoUrl = photo.url;
+    this.member.photos.forEach(p => {
+      if (p.id === photo.id) p.isMain = true;
+      else if (p.isMain) p.isMain = false;
+    });
   }
 
   deletePhoto(photo: Photo) {
@@ -66,8 +68,10 @@ export class PhotoEditorComponent implements OnInit {
 
     this.uploader.onSuccessItem = (item, response, status, headers) => {
       if (response) {
-        const photo = JSON.parse(response);
+        const photo = JSON.parse(response) as Photo;
+        if (this.member.photos.length <= 0) photo.isMain = true;
         this.member.photos.push(photo);
+        if (photo.isMain) this.setMainPhotoLocal(photo);
       }
     }
   }
