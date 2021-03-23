@@ -17,7 +17,10 @@ export class MembersService {
 
   constructor(private http: HttpClient, private accountService: AccountService) {
     accountService.currentUser$.subscribe(user => {
-      if (user === null) this.members = [];
+      if (user === null) {
+        this.members = [];
+        this.paginatedResult = new PaginatedResult<Member[]>();
+      }
     });
   }
 
