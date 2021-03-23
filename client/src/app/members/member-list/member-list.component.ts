@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Member } from 'src/app/_models/member';
 import { Pagination } from 'src/app/_models/pagination';
+import { UserParams } from 'src/app/_models/userParams';
 import { MembersService } from 'src/app/_services/members.service';
 
 @Component({
@@ -12,8 +13,7 @@ import { MembersService } from 'src/app/_services/members.service';
 export class MemberListComponent implements OnInit {
   members: Member[];
   pagination: Pagination;
-  currentPage = 1;
-  itemsPerPage = 5;
+  userParams = new UserParams();
   genderFilterForm: FormGroup;
 
   constructor(private membersService: MembersService, private fb: FormBuilder,) { }
@@ -29,14 +29,14 @@ export class MemberListComponent implements OnInit {
   }
 
   genderFilterChanged() {
-    if (this.genderFilterForm.value?.gender != null && this.pagination.gender !== this.genderFilterForm.value.gender) {
-      this.pagination.gender = this.genderFilterForm.value.gender;
+    if (this.pagination.gender !== this.genderFilterForm.value.gender) {
+      this.userParams.gender = this.genderFilterForm.value.gender;
       this.loadMembers();
     }
   }
 
   loadMembers() {
-    this.membersService.getMembers(this.currentPage, this.itemsPerPage).subscribe(response => {
+    this.membersService.getMembers(this.userParams).subscribe(response => {
       this.members = response.result;
       this.pagination = response.pagiantion;
       this.genderFilterForm.setValue({ gender: this.pagination.gender });
@@ -44,7 +44,7 @@ export class MemberListComponent implements OnInit {
   }
 
   pageChanged(event: any) {
-    this.currentPage = event.page;
+    this.userParams.currentPage = event.page;
     this.loadMembers();
   }
 }

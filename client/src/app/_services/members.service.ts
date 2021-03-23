@@ -5,6 +5,7 @@ import { map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { Member } from '../_models/member';
 import { PaginatedResult } from '../_models/pagination';
+import { UserParams } from '../_models/userParams';
 import { AccountService } from './account.service';
 
 @Injectable({
@@ -24,17 +25,13 @@ export class MembersService {
     });
   }
 
-  getMembers(currentPage?: number, itemsPerPage?: number) {
+  getMembers(userParams: UserParams) {
     let params = new HttpParams();
 
-    if (this.paginatedResult.pagiantion?.gender != null)
-      params = params.append('gender', this.paginatedResult.pagiantion?.gender);
-
-    if (currentPage !== null && itemsPerPage !== null)
-      params = params
-        .append('currentPage', currentPage.toString())
-        .append('itemsPerPage', itemsPerPage.toString());
-
+    for (let [key, value] of Object.entries(userParams)) {
+      if (value != null)
+        params = params.append(key, value.toString())
+    }
 
     // if (this.members.length > 0) return of(this.members);
     // return this.http.get<Member[]>(this.baseUrl + 'users').pipe(
