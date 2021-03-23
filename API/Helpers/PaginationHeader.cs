@@ -15,5 +15,7 @@ namespace API.Helpers
         public int TotalItems { get; set; }
         public int TotalPages { get; set; }
         public string Gender { get; set; }
+        public int MinAge { get; set; }
+        public int? MaxAge { get; set; }
     }
 }

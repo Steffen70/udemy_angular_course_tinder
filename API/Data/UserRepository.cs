@@ -10,6 +10,7 @@ using AutoMapper.QueryableExtensions;
 using System.Security.Claims;
 using API.Helpers;
 using API.Extensions;
+using System;
 
 namespace API.Data
 {
@@ -41,6 +42,8 @@ namespace API.Data
                 .AsQueryable()
                 .Where(u => u.UserName != userParams.CurrentUsername)
                 .Where(u => u.Gender == userParams.Gender)
+                .Where(u => u.DateOfBirth <= DateTime.Today.AddYears(-userParams.MinAge))
+                .Where(u => userParams.MaxAge.HasValue ? u.DateOfBirth >= DateTime.Today.AddYears(-userParams.MaxAge.Value - 1) : true)
                 .ProjectTo<MemberDto>(_mapper.ConfigurationProvider)
                 .AsNoTracking();
 
