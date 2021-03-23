@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Member } from 'src/app/_models/member';
+import { Pagination } from 'src/app/_models/pagination';
 import { MembersService } from 'src/app/_services/members.service';
 
 @Component({
@@ -9,6 +10,9 @@ import { MembersService } from 'src/app/_services/members.service';
 })
 export class MemberListComponent implements OnInit {
   members: Member[];
+  pagination: Pagination;
+  currentPage = 1;
+  itemsPerPage = 5;
 
   constructor(private membersService: MembersService) { }
 
@@ -17,8 +21,14 @@ export class MemberListComponent implements OnInit {
   }
 
   loadMembers() {
-    this.membersService.getMembers().subscribe(members => {
-      this.members = members;
+    this.membersService.getMembers(this.currentPage, this.itemsPerPage).subscribe(response => {
+      this.members = response.result;
+      this.pagination = response.pagiantion
     })
+  }
+
+  pageChanged(event: any) {
+    this.currentPage = event.page;
+    this.loadMembers();
   }
 }

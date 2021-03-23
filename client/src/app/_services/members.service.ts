@@ -1,9 +1,10 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { Member } from '../_models/member';
+import { PaginatedResult } from '../_models/pagination';
 import { AccountService } from './account.service';
 
 @Injectable({
@@ -12,6 +13,7 @@ import { AccountService } from './account.service';
 export class MembersService {
   baseUrl = environment.apiUrl;
   members: Member[] = [];
+  paginatedResult: PaginatedResult<Member[]> = new PaginatedResult<Member[]>();
 
   constructor(private http: HttpClient, private accountService: AccountService) {
     accountService.currentUser$.subscribe(user => {
@@ -19,12 +21,29 @@ export class MembersService {
     });
   }
 
-  getMembers() {
-    if (this.members.length > 0) return of(this.members);
-    return this.http.get<Member[]>(this.baseUrl + 'users').pipe(
-      map(members => {
-        this.members = members;
-        return members
+  getMembers(currentPage?: number, itemsPerPage?: number) {
+    let params = new HttpParams();
+
+    if (currentPage !== null && itemsPerPage !== null)
+      params = params
+        .append('currentPage', currentPage.toString())
+        .append('itemsPerPage', itemsPerPage.toString());
+
+    // if (this.members.length > 0) return of(this.members);
+    // return this.http.get<Member[]>(this.baseUrl + 'users').pipe(
+    //   map(members => {
+    //     this.members = members;
+    //     return members
+    //   })
+    // );
+
+    return this.http.get<Member[]>(this.baseUrl + 'users', { observe: 'response', params }).pipe(
+      map(response => {
+        this.paginatedResult.result = response.body
+        var paginationHeders = response.headers.get('Pagination');
+        if (paginationHeders != null)
+          this.paginatedResult.pagiantion = JSON.parse(paginationHeders);
+        return this.paginatedResult;
       })
     );
   }

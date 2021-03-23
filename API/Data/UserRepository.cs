@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using System.Security.Claims;
+using API.Helpers;
 
 namespace API.Data
 {
@@ -35,11 +36,12 @@ namespace API.Data
                 .SingleOrDefaultAsync();
         }
 
-        public async Task<IEnumerable<MemberDto>> GetMembersAsync()
+        public async Task<PagedList<MemberDto>> GetMembersAsync(UserParams userParams)
         {
-            return await _context.Users
-                .ProjectTo<MemberDto>(_mapper.ConfigurationProvider)
-                .ToListAsync();
+            var query = _context.Users
+                .ProjectTo<MemberDto>(_mapper.ConfigurationProvider).AsNoTracking();
+
+            return await PagedList<MemberDto>.CreateAsync(query, userParams.CurrentPage, userParams.ItemsPerPage);
         }
 
         public async Task<AppUser> GetUserByIdAsync(int id)
