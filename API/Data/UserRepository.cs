@@ -9,6 +9,7 @@ using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using System.Security.Claims;
 using API.Helpers;
+using API.Extensions;
 
 namespace API.Data
 {
@@ -23,10 +24,8 @@ namespace API.Data
         }
 
         public async Task<AppUser> GetAppUserByClaimsPrincipalAsync(ClaimsPrincipal user)
-        {
-            var username = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            return await this.GetUserByUsernameAsync(username);
-        }
+        => await this.GetUserByUsernameAsync(user.GetUserName());
+
 
         public async Task<MemberDto> GetMemberAsync(string username)
         {
@@ -39,7 +38,11 @@ namespace API.Data
         public async Task<PagedList<MemberDto>> GetMembersAsync(UserParams userParams)
         {
             var query = _context.Users
-                .ProjectTo<MemberDto>(_mapper.ConfigurationProvider).AsNoTracking();
+                .AsQueryable()
+                .Where(u => u.UserName != userParams.CurrentUsername)
+                .Where(u => u.Gender == userParams.Gender)
+                .ProjectTo<MemberDto>(_mapper.ConfigurationProvider)
+                .AsNoTracking();
 
             return await PagedList<MemberDto>.CreateAsync(query, userParams.CurrentPage, userParams.ItemsPerPage);
         }

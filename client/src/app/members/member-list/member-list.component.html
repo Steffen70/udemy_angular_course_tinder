@@ -9,7 +9,7 @@
      *ngIf="pagination">
     <pagination [totalItems]="pagination.totalItems"
                 [itemsPerPage]="pagination.itemsPerPage"
-                [(ngModel)]="pagination.currentPage"
+                [(ngModel)]="pagination.pageNumber"
                 (pageChanged)="pageChanged($event)">
     </pagination>
 </div>

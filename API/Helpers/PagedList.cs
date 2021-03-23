@@ -10,27 +10,27 @@ namespace API.Helpers
     {
         public PagedList(IEnumerable<T> items, int count, int pageNumber, int pageSize)
         {
-            CurrentPage = pageNumber;
+            PageNumber = pageNumber;
             TotalPages = (int)Math.Ceiling(count / (double)pageSize);
             PageSize = pageSize;
             TotalCount = count;
             AddRange(items);
         }
 
-        public int CurrentPage { get; set; }
+        public int PageNumber { get; set; }
         public int TotalPages { get; set; }
         public int PageSize { get; set; }
         public int TotalCount { get; set; }
 
-        public static async Task<PagedList<T>> CreateAsync(IQueryable<T> source, int currentPage, int itemsPerPage)
+        public static async Task<PagedList<T>> CreateAsync(IQueryable<T> source, int pageNumber, int itemsPerPage)
         {
             var count = await source.CountAsync();
             var items = await source
-                .Skip((currentPage - 1) * itemsPerPage)
+                .Skip((pageNumber - 1) * itemsPerPage)
                 .Take(itemsPerPage)
                 .ToListAsync();
 
-            return new PagedList<T>(items, count, currentPage, itemsPerPage);
+            return new PagedList<T>(items, count, pageNumber, itemsPerPage);
         }
     }
 }

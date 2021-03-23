@@ -24,10 +24,14 @@ export class MembersService {
   getMembers(currentPage?: number, itemsPerPage?: number) {
     let params = new HttpParams();
 
+    if (this.paginatedResult.pagiantion?.gender != null)
+      params = params.append('gender', this.paginatedResult.pagiantion?.gender);
+
     if (currentPage !== null && itemsPerPage !== null)
       params = params
         .append('currentPage', currentPage.toString())
         .append('itemsPerPage', itemsPerPage.toString());
+
 
     // if (this.members.length > 0) return of(this.members);
     // return this.http.get<Member[]>(this.baseUrl + 'users').pipe(
