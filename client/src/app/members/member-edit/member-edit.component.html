@@ -1,15 +1,8 @@
 <ng-container *ngIf="member">
     <div class="row">
         <div class="col-4">
-            <h1>Your profile</h1>
-        </div>
-        <div class="col-8">
-            <div class="alert alert-info" *ngIf="editForm.dirty">
-                <strong>Information: </strong>You have made changes. Any unsaved changes will be lost.
-            </div>
-        </div>
-        <div class="col-4">
             <div class="card">
+                <div class="card-header"><h3>Edit your profile</h3></div>
                 <img src="{{member.photoUrl || './assets/user.png'}}" alt="{{member.knownAs}}"
                     class="card-img-top img-thumbnail">
                 <div class="card-body">
@@ -40,6 +33,10 @@
         </div>
 
         <div class="col-8">
+            <div class="alert alert-info" [ngClass]="{invisible: !editForm.dirty}">
+                <strong>Information: </strong>You have made changes. Any unsaved changes will be lost.
+            </div>
+
             <tabset class="member-tabset">
                 <tab heading='Edit {{member.knownAs}}'>
                     <form #editForm="ngForm" id="editForm" (ngSubmit)="updateMember()">
