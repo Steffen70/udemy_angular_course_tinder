@@ -1,3 +1,22 @@
+<form [formGroup]="genderFilterForm"
+      autocomplete="off">
+    <div class="form-control form-group">
+        <label class="control-label"
+               style="margin-right: 10px;">I'm into: </label>
+        <label class="radio-inline">
+            <input type="radio"
+                   value="male"
+                   formControlName="gender"> Man
+        </label>
+        <label class="radio-inline">
+            <input type="radio"
+                   value="female"
+                   formControlName="gender"
+                   class="ml-3"> Woman
+        </label>
+    </div>
+</form>
+
 <div class="row">
     <div class="col-2"
          *ngFor="let member of members">
