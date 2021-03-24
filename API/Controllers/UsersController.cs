@@ -31,10 +31,10 @@ namespace API.Controllers
 
             if (string.IsNullOrEmpty(userParams.Gender))
                 userParams.Gender = (await _userRepository.GetUserByUsernameAsync(User.GetUserName())).Gender == "female" ? "male" : "female";
-            
+
             var users = await _userRepository.GetMembersAsync(userParams);
 
-            Response.AddPaginationHeader(users, _mapper, userParams);
+            Response.AddPaginationHeader<UserHeader, MemberDto, UserParams>(users, _mapper, userParams);
 
             return Ok(users);
         }

@@ -4,7 +4,9 @@ using System.Threading.Tasks;
 using API.DTOs;
 using API.Entities;
 using API.Extensions;
+using API.Helpers;
 using API.Interfaces;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -13,8 +15,10 @@ namespace API.Controllers
     {
         private readonly ILikesRepository _likesRepository;
         private readonly IUserRepository _userRepository;
-        public LikesController(IUserRepository userRepository, ILikesRepository likesRepository)
+        private readonly IMapper _mapper;
+        public LikesController(IUserRepository userRepository, ILikesRepository likesRepository, IMapper mapper)
         {
+            _mapper = mapper;
             _userRepository = userRepository;
             _likesRepository = likesRepository;
         }
@@ -52,7 +56,13 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<LikeDto>>> GetUserLikes(string predicate)
-        => Ok(await _likesRepository.GetUserLikes(User.GetUserId(), predicate));
+        public async Task<ActionResult<PagedList<LikeDto>>> GetUserLikes([FromQuery] LikesParams likesParams)
+        {
+            likesParams.UserId = User.GetUserId();
+            var users = await _likesRepository.GetUserLikes(likesParams);
+
+            Response.AddPaginationHeader<LikesHeader, LikeDto, LikesParams>(users, _mapper, likesParams);
+            return Ok(users);
+        }
     }
 }

@@ -1,21 +1,18 @@
 namespace API.Helpers
 {
-    public class PaginationHeader
+    public abstract class PaginationHeader
     {
-        public PaginationHeader(int pageNumber, int itemsPerPage, int totalItems, int totalPages)
-        {
-            PageNumber = pageNumber;
-            ItemsPerPage = itemsPerPage;
-            TotalItems = totalItems;
-            TotalPages = totalPages;
-        }
-
         public int PageNumber { get; set; }
         public int ItemsPerPage { get; set; }
         public int TotalItems { get; set; }
         public int TotalPages { get; set; }
-        public string Gender { get; set; }
-        public int MinAge { get; set; }
-        public int? MaxAge { get; set; }
+
+        public void Populate<TList>(PagedList<TList> pagedList)
+        {
+            this.PageNumber = pagedList.PageNumber;
+            this.ItemsPerPage = pagedList.PageSize;
+            this.TotalItems = pagedList.TotalCount;
+            this.TotalPages = pagedList.TotalPages;
+        }
     }
 }

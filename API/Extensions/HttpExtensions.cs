@@ -7,10 +7,14 @@ namespace API.Extensions
 {
     public static class HttpExtensions
     {
-        public static PagedList<T> AddPaginationHeader<T>(this HttpResponse response, PagedList<T> pagedList, IMapper mapper, UserParams userParams)
+        public static PagedList<TList> AddPaginationHeader<THeader, TList, TParams>(this HttpResponse response, PagedList<TList> pagedList, IMapper mapper, TParams paginationParams)
+            where TParams : PaginationParams
+            where THeader : PaginationHeader, new()
         {
-            var paginationHeader = new PaginationHeader(pagedList.PageNumber, pagedList.PageSize, pagedList.TotalCount, pagedList.TotalPages);
-            paginationHeader = mapper.Map(userParams, paginationHeader);
+            THeader paginationHeader = new THeader();
+            paginationHeader.Populate(pagedList);
+
+            paginationHeader = mapper.Map(paginationParams, paginationHeader);
 
             var options = new JsonSerializerOptions
             {

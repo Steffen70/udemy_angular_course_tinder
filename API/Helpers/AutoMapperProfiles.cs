@@ -19,7 +19,8 @@ namespace API.Helpers
             CreateMap<MemberUpdateDto, AppUser>();
             CreateMap<RegisterDto, AppUser>();
 
-            CreateMap<UserParams, PaginationHeader>();
+            CreateMap<UserParams, UserHeader>();
+            CreateMap<LikesParams, LikesHeader>();
         }
     }
 }
