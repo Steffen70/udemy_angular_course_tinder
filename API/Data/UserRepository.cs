@@ -24,10 +24,6 @@ namespace API.Data
             _context = context;
         }
 
-        public async Task<AppUser> GetAppUserByClaimsPrincipalAsync(ClaimsPrincipal user)
-        => await this.GetUserByUsernameAsync(user.GetUserName());
-
-
         public async Task<MemberDto> GetMemberAsync(string username)
         {
             return await _context.Users
@@ -46,6 +42,12 @@ namespace API.Data
                 .Where(u => userParams.MaxAge.HasValue ? u.DateOfBirth >= DateTime.Today.AddYears(-userParams.MaxAge.Value - 1) : true)
                 .ProjectTo<MemberDto>(_mapper.ConfigurationProvider)
                 .AsNoTracking();
+
+            query = userParams.OrderBy switch
+            {
+                "created" => query.OrderByDescending(u => u.Created),
+                _ => query.OrderByDescending(u => u.LastActive),
+            };
 
             return await PagedList<MemberDto>.CreateAsync(query, userParams.CurrentPage, userParams.ItemsPerPage);
         }

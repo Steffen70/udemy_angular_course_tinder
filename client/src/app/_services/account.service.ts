@@ -16,17 +16,11 @@ export class AccountService {
   constructor(private http: HttpClient) { }
 
   login(model: any) {
-    return this.http.post(this.baseUrl + 'account/login', model).pipe(
-      map((response: User) => {
-        const user = response;
-        if (user)
-          this.setCurrentUser(user);
-      })
-    );
+    return this.register(model, this.baseUrl + 'account/login');
   }
 
-  register(model: any) {
-    return this.http.post(this.baseUrl + 'account/register', model).pipe(
+  register(model: any, url?: string) {
+    return this.http.post(url ? url : this.baseUrl + 'account/register', model).pipe(
       map((user: User) => {
         if (user)
           this.setCurrentUser(user);

@@ -1,26 +1,65 @@
-<form #genderForm="ngForm"
-      autocomplete="off">
-    <div class="form-control form-group"
-         *ngIf="pagination">
-        <label class="control-label"
-               style="margin-right: 10px;">I'm into: </label>
+<div class="text-center mt-3">
+    <h2>Your matches - {{pagination?.totalItems}} found</h2>
+</div>
 
-        <label class="radio-inline">
-            <input type="radio"
-                   value="male"
-                   name="gender"
-                   [(ngModel)]="pagination.gender"
-                   (ngModelChange)="genderFormChanged($event)"> Man</label>
+<div class="container mt-3">
+    <form #filterForm="ngForm"
+          class="form-inline mb-3"
+          (ngSubmit)="loadMembers()"
+          autocomplete="off">
+        <div class="form-group">
+            <label>Age from: </label>
+            <input type="number"
+                   name="minAge"
+                   class="form-control ml-1"
+                   style="width: 70px;"
+                   [(ngModel)]="userParams.minAge">
+        </div>
 
-        <label class="radio-inline">
-            <input type="radio"
-                   value="female"
-                   name="gender"
-                   class="ml-3"
-                   [(ngModel)]="pagination.gender"
-                   (ngModelChange)="genderFormChanged($event)"> Woman</label>
-    </div>
-</form>
+        <div class="form-group px-2">
+            <label>Age to: </label>
+            <input type="number"
+                   name="maxAge"
+                   class="form-control ml-1"
+                   style="width: 70px;"
+                   [(ngModel)]="userParams.maxAge">
+        </div>
+
+        <div class="form-group px-2">
+            <label>Show: </label>
+            <select name="gender"
+                    style="width: 130px;"
+                    class="form-control ml-1"
+                    [(ngModel)]="userParams.gender">
+                <option *ngFor="let gender of genderList"
+                        [value]="gender.value">{{gender.display}}</option>
+            </select>
+        </div>
+
+        <button class="btn btn-primary ml-1"
+                type="submit">Apply Filters</button>
+        <button class="btn btn-info ml-1"
+                (click)="resetFilters()">Reset Filters</button>
+
+        <div class="col">
+            <div class="btn-group float-right">
+                <button class="btn btn-primary"
+                        type="button"
+                        name="orderBy"
+                        btnRadio="lastActive"
+                        (click)="loadMembers()"
+                        [(ngModel)]="userParams.orderBy">Last Active</button>
+
+                <button class="btn btn-primary"
+                        type="button"
+                        name="orderBy"
+                        btnRadio="created"
+                        (click)="loadMembers()"
+                        [(ngModel)]="userParams.orderBy">Newest Members</button>
+            </div>
+        </div>
+    </form>
+</div>
 
 <div class="row">
     <div class="col-2"

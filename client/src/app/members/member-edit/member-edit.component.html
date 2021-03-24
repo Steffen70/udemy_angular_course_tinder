@@ -2,9 +2,12 @@
     <div class="row">
         <div class="col-4">
             <div class="card">
-                <div class="card-header"><h3>Edit your profile</h3></div>
-                <img src="{{member.photoUrl || './assets/user.png'}}" alt="{{member.knownAs}}"
-                    class="card-img-top img-thumbnail">
+                <div class="card-header">
+                    <h3>Edit your profile</h3>
+                </div>
+                <img src="{{member.photoUrl || './assets/user.png'}}"
+                     alt="{{member.knownAs}}"
+                     class="card-img-top img-thumbnail">
                 <div class="card-body">
                     <div>
                         <strong>Location:</strong>
@@ -15,16 +18,15 @@
                         <p>{{member.age}}</p>
                     </div>
                     <div>
-                        <strong>Last Active:</strong>
-                        <p>{{member.lastActive}}</p>
-                    </div>
-                    <div>
                         <strong>Member since:</strong>
-                        <p>{{member.created}}</p>
+                        <p>{{member.created | date: 'dd. MMMM yyyy'}}</p>
                     </div>
                 </div>
                 <div class="card-footer">
-                    <button class="btn btn-success btn-block" type="submit" form="editForm" [disabled]="!editForm.dirty">
+                    <button class="btn btn-success btn-block"
+                            type="submit"
+                            form="editForm"
+                            [disabled]="!editForm.dirty">
                         <!-- (click)="editForm.ngSubmit.emit()"> -->
                         Save Changes
                     </button>
@@ -33,34 +35,49 @@
         </div>
 
         <div class="col-8">
-            <div class="alert alert-info" [ngClass]="{invisible: !editForm.dirty}">
+            <div class="alert alert-info"
+                 [ngClass]="{invisible: !editForm.dirty}">
                 <strong>Information: </strong>You have made changes. Any unsaved changes will be lost.
             </div>
 
             <tabset class="member-tabset">
                 <tab heading='Edit {{member.knownAs}}'>
-                    <form #editForm="ngForm" id="editForm" (ngSubmit)="updateMember()">
+                    <form #editForm="ngForm"
+                          id="editForm"
+                          (ngSubmit)="updateMember()">
                         <h4>Description:</h4>
-                        <textarea [(ngModel)]="member.introduction" class="form-control" name="introduction"
-                            rows="4"></textarea>
+                        <textarea [(ngModel)]="member.introduction"
+                                  class="form-control"
+                                  name="introduction"
+                                  rows="4"></textarea>
 
                         <h4 class="mt-2">Looking for:</h4>
-                        <textarea [(ngModel)]="member.lookingFor" class="form-control" name="lookingFor"
-                            rows="4"></textarea>
+                        <textarea [(ngModel)]="member.lookingFor"
+                                  class="form-control"
+                                  name="lookingFor"
+                                  rows="4"></textarea>
 
                         <h4 class="mt-2">Interests:</h4>
-                        <textarea [(ngModel)]="member.interests" class="form-control" name="interests"
-                            rows="4"></textarea>
+                        <textarea [(ngModel)]="member.interests"
+                                  class="form-control"
+                                  name="interests"
+                                  rows="4"></textarea>
 
                         <h4 class="mt-2">Location Details:</h4>
                         <div class="form-inline">
                             <label for="city">City: </label>
-                            <input [(ngModel)]="member.city" class="form-control" type="text" name="city"
-                                class="form-control mx-2">
+                            <input [(ngModel)]="member.city"
+                                   class="form-control"
+                                   type="text"
+                                   name="city"
+                                   class="form-control mx-2">
 
                             <label for="city">Country: </label>
-                            <input [(ngModel)]="member.country" class="form-control" type="text" name="country"
-                                class="form-control mx-2">
+                            <input [(ngModel)]="member.country"
+                                   class="form-control"
+                                   type="text"
+                                   name="country"
+                                   class="form-control mx-2">
                         </div>
                     </form>
                 </tab>

@@ -30,7 +30,7 @@ namespace API.Controllers
             userParams.CurrentUsername = User.GetUserName();
 
             if (string.IsNullOrEmpty(userParams.Gender))
-                userParams.Gender = (await _userRepository.GetAppUserByClaimsPrincipalAsync(User)).Gender == "female" ? "male" : "female";
+                userParams.Gender = (await _userRepository.GetUserByUsernameAsync(User.GetUserName())).Gender == "female" ? "male" : "female";
             
             var users = await _userRepository.GetMembersAsync(userParams);
 
@@ -46,7 +46,7 @@ namespace API.Controllers
         [HttpPut]
         public async Task<ActionResult<MemberDto>> PutUser(MemberUpdateDto memberUpdateDto)
         {
-            var user = await _userRepository.GetAppUserByClaimsPrincipalAsync(User);
+            var user = await _userRepository.GetUserByUsernameAsync(User.GetUserName());
             _mapper.Map(memberUpdateDto, user);
 
             _userRepository.Update(user);
@@ -58,7 +58,7 @@ namespace API.Controllers
         [HttpPost("add-photo")]
         public async Task<ActionResult<PhotoDto>> AddPhoto(IFormFile file)
         {
-            var user = await _userRepository.GetAppUserByClaimsPrincipalAsync(User);
+            var user = await _userRepository.GetUserByUsernameAsync(User.GetUserName());
             var result = await _photoService.AddPhotoAsync(file);
 
             if (result.Error != null) return BadRequest(result.Error.Message);
@@ -86,7 +86,7 @@ namespace API.Controllers
         [HttpPut("set-main-photo/{photoId}")]
         public async Task<ActionResult> SetMainPhoto(int photoId)
         {
-            var user = await _userRepository.GetAppUserByClaimsPrincipalAsync(User);
+            var user = await _userRepository.GetUserByUsernameAsync(User.GetUserName());
 
             var photo = user.Photos.FirstOrDefault(p => p.Id == photoId);
             if (photo.IsMain) return BadRequest("This is already your main photo");
@@ -104,7 +104,7 @@ namespace API.Controllers
         [HttpDelete("delete-photo/{photoId}")]
         public async Task<ActionResult> DeletePhoto(int photoId)
         {
-            var user = await _userRepository.GetAppUserByClaimsPrincipalAsync(User);
+            var user = await _userRepository.GetUserByUsernameAsync(User.GetUserName());
 
             var photo = user.Photos.FirstOrDefault(p => p.Id == photoId);
 

@@ -16,7 +16,7 @@ namespace API.Helpers
             set => _itemsPerPage = value > MaxPageSize ? MaxPageSize : value;
         }
         public string CurrentUsername { get; set; }
-        [RegularExpression("(male)|(female)", ErrorMessage = "The Gender must be either 'male' or 'female' only.")]
+        [RegularExpression("(male)|(female)", ErrorMessage = "The Gender must be either 'male' or 'female'")]
         public string Gender { get; set; }
         [Range(18, int.MaxValue, ErrorMessage = "No members are younger than 18")]
         public int MinAge { get; set; } = 18;
@@ -25,5 +25,7 @@ namespace API.Helpers
             get => _maxAge;
             set => _maxAge = value < MinAge ? MinAge : value;
         }
+        [RegularExpression("(created)|(lastActive)", ErrorMessage = "You can order by 'created' or 'lastActive'")]
+        public string OrderBy { get; set; } = "lastActive";
     }
 }
