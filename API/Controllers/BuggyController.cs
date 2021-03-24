@@ -5,8 +5,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
-    [AllowAnonymous]
-    public class BuggyController : BaseApiController
+    [ApiController]
+    [Route("api/[controller]")]
+    public class BuggyController : ControllerBase
     {
         private readonly DataContext _context;
         public BuggyController(DataContext context)
@@ -48,7 +49,8 @@ namespace API.Controllers
         [HttpGet("bad-request")]
         public ActionResult<string> GetBadRequest()
         {
-            return BadRequest("This was not a good request!");
+            return BadRequest();
+            // return BadRequest("This was not a good request!");
         }
     }
 }
