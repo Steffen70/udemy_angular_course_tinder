@@ -7,7 +7,7 @@ import { Member } from '../_models/member';
 import { MemberCacheMap } from '../_models/memberCacheMap';
 import { PaginatedResult } from '../_models/pagination';
 import { User } from '../_models/user';
-import { UserParams } from '../_models/userParams';
+import { LikesParams, PaginationParams, UserParams } from '../_models/paginationParams';
 import { AccountService } from './account.service';
 
 @Injectable({
@@ -18,6 +18,7 @@ export class MembersService {
   memberCache = new MemberCacheMap();
   user: User;
   userParams: UserParams;
+  likesParams = new LikesParams('liked');
 
 
   constructor(private http: HttpClient, private accountService: AccountService) {
@@ -25,6 +26,29 @@ export class MembersService {
       this.user = user;
       this.userParams = new UserParams(this.user);
     });
+  }
+
+  private getPaginatiedResult<T>(url: string, paginationParams: PaginationParams) {
+    const paginatedResult = new PaginatedResult<T>();
+    let params = paginationParams.getPaginationHeaders();
+
+    return this.http.get<T>(url, { observe: 'response', params }).pipe(
+      map(response => {
+        paginatedResult.result = response.body
+        var paginationHeaders = response.headers.get('Pagination');
+        if (paginationHeaders != null)
+          paginatedResult.pagiantion = JSON.parse(paginationHeaders);
+        return paginatedResult;
+      })
+    );
+  }
+
+  getLikesParams() {
+    return this.likesParams;
+  }
+
+  setLikesParams(likesParams: LikesParams) {
+    this.likesParams = likesParams;
   }
 
   getUserParams() {
@@ -40,42 +64,16 @@ export class MembersService {
     return this.userParams;
   }
 
-  getMembers(userParams: UserParams) {
-    var cachedData = this.memberCache.get(userParams.getIdentifier());
+  getMembers() {
+    var cachedData = this.memberCache.get(this.userParams.getIdentifier());
     if (cachedData) return of(cachedData);
 
-    let params = this.getPaginationHeaders(userParams);
-    return this.getPaginatiedResult<Member[]>(`${this.baseUrl}users`, params).pipe(
+    return this.getPaginatiedResult<Member[]>(`${this.baseUrl}users`, this.userParams).pipe(
       map(memberArr => {
-        this.memberCache.set(userParams.getIdentifier(), memberArr);
+        this.memberCache.set(this.userParams.getIdentifier(), memberArr);
         return memberArr;
       })
     );
-  }
-
-  private getPaginatiedResult<T>(url: string, params: HttpParams) {
-    const paginatedResult = new PaginatedResult<T>();
-
-    return this.http.get<T>(url, { observe: 'response', params }).pipe(
-      map(response => {
-        paginatedResult.result = response.body
-        var paginationHeaders = response.headers.get('Pagination');
-        if (paginationHeaders != null)
-          paginatedResult.pagiantion = JSON.parse(paginationHeaders);
-        return paginatedResult;
-      })
-    );
-  }
-
-  private getPaginationHeaders(userParams: UserParams) {
-    let params = new HttpParams();
-
-    for (let [key, value] of Object.entries(userParams)) {
-      if (value != null)
-        params = params.append(key, value.toString())
-    }
-
-    return params
   }
 
   getMember(username: string) {
@@ -105,7 +103,7 @@ export class MembersService {
     return this.http.post(`${this.baseUrl}likes/${username}`, {});
   }
 
-  getLikes(predicate: string) {
-    return this.http.get<Partial<Member[]>>(`${this.baseUrl}likes?predicate=${predicate}`);
+  getLikes() {
+    return this.getPaginatiedResult<Partial<Member[]>>(`${this.baseUrl}likes`, this.likesParams)
   }
 }
