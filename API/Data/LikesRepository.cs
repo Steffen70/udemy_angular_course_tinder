@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -21,15 +20,14 @@ namespace API.Data
         public async Task<UserLike> GetUserLike(int sourceUserId, int likedUserId)
         => await _context.Likes.FindAsync(sourceUserId, likedUserId);
 
-        public async Task<IEnumerable<LikeDto>> GetUserLikes(int userId, string predicate = "liked")
+        public async Task<IEnumerable<LikeDto>> GetUserLikes(int userId, string predicate)
         {
             var likes = _context.Likes.AsQueryable();
 
             var users = predicate switch
             {
-                "liked" => likes.Where(like => like.SourceUserId == userId).Select(like => like.LikedUser),
                 "likedBy" => likes.Where(like => like.LikedUserId == userId).Select(like => like.SourceUser),
-                _ => throw new ArgumentException($"'{predicate}' is not a supported predicate, use 'liked' or 'likedBy' as argument")
+                _ => likes.Where(like => like.SourceUserId == userId).Select(like => like.LikedUser)
             };
 
             return await users.Select(user => new LikeDto

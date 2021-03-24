@@ -52,8 +52,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<LikeDto>>> GetUserLikes(
-            [RegularExpression("(liked)|(likedBy)", ErrorMessage = "Use either 'liked' or 'likedBy' as predicate")] string predicate = "liked")
+        public async Task<ActionResult<IEnumerable<LikeDto>>> GetUserLikes(string predicate)
         => Ok(await _likesRepository.GetUserLikes(User.GetUserId(), predicate));
     }
 }
