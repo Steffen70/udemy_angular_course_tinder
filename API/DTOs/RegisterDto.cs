@@ -7,7 +7,7 @@ namespace API.DTOs
     public class RegisterDto
     {
         [Required]
-        [RegularExpression("(male)|(female)", ErrorMessage = "The Gender must be either 'male' or 'female' only.")]
+        [RegularExpression("(male)|(female)", ErrorMessage = "The Gender must be either 'male' or 'female'")]
         public string Gender { get; set; }
         [Required]
         public string KnownAs { get; set; }
