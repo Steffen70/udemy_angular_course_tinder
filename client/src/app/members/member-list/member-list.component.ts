@@ -16,14 +16,10 @@ export class MemberListComponent implements OnInit {
   members: Member[];
   pagination: Pagination;
   userParams: UserParams;
-  user: User;
   genderList = [{ value: 'male', display: 'Man' }, { value: 'female', display: 'Woman' }]
 
-  constructor(private membersService: MembersService, private accountService: AccountService) {
-    this.accountService.currentUser$.pipe(take(1)).subscribe(user => {
-      this.user = user;
-      this.resetFilters();
-    });
+  constructor(private membersService: MembersService) {
+    this.userParams = this.membersService.getUserParams();
   }
 
   ngOnInit(): void {
@@ -31,12 +27,13 @@ export class MemberListComponent implements OnInit {
   }
 
   loadMembers() {
+    this.membersService.setUserParams(this.userParams);
     this.membersService.getMembers(this.userParams).subscribe(response =>
       [this.members, this.pagination] = [response.result, response.pagiantion]);
   }
 
   resetFilters() {
-    this.userParams = new UserParams(this.user);
+    this.userParams = this.membersService.resetUserParams();
   }
 
   pageChanged(event: any) {

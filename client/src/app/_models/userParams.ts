@@ -8,7 +8,11 @@ export class UserParams {
     gender: string;
     orderBy = 'lastActive'
 
-    constructor(user: User){
+    constructor(user: User) {
         this.gender = user.gender === 'female' ? 'male' : 'female';
+    }
+
+    public getIdentifier() {
+        return Object.values(this).join('-');
     }
 }
