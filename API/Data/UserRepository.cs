@@ -7,9 +7,7 @@ using API.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using System.Security.Claims;
-using API.Helpers;
-using API.Extensions;
+using API.Helpers.Pagination;
 using System;
 
 namespace API.Data

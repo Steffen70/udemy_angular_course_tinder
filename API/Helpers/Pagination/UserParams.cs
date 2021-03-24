@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace API.Helpers
+namespace API.Helpers.Pagination
 {
     public class UserParams : PaginationParams
     {

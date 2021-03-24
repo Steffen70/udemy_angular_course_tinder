@@ -2,6 +2,7 @@ using System.Linq;
 using API.DTOs;
 using API.Entities;
 using API.Extensions;
+using API.Helpers.Pagination;
 using AutoMapper;
 
 namespace API.Helpers

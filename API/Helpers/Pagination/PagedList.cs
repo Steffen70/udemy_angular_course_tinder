@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
-namespace API.Helpers
+namespace API.Helpers.Pagination
 {
     public class PagedList<T> : List<T>
     {

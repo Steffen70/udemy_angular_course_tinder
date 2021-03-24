@@ -1,5 +1,5 @@
 using System.Text.Json;
-using API.Helpers;
+using API.Helpers.Pagination;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 

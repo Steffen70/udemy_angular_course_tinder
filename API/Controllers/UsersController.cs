@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using API.DTOs;
 using API.Entities;
 using API.Extensions;
-using API.Helpers;
+using API.Helpers.Pagination;
 using API.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
