@@ -1,19 +1,24 @@
-<form [formGroup]="genderFilterForm"
+<form #genderForm="ngForm"
       autocomplete="off">
-    <div class="form-control form-group">
+    <div class="form-control form-group"
+         *ngIf="pagination">
         <label class="control-label"
                style="margin-right: 10px;">I'm into: </label>
+
         <label class="radio-inline">
             <input type="radio"
                    value="male"
-                   formControlName="gender"> Man
-        </label>
+                   name="gender"
+                   [(ngModel)]="pagination.gender"
+                   (ngModelChange)="genderFormChanged($event)"> Man</label>
+
         <label class="radio-inline">
             <input type="radio"
                    value="female"
-                   formControlName="gender"
-                   class="ml-3"> Woman
-        </label>
+                   name="gender"
+                   class="ml-3"
+                   [(ngModel)]="pagination.gender"
+                   (ngModelChange)="genderFormChanged($event)"> Woman</label>
     </div>
 </form>
 
