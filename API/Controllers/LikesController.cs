@@ -25,7 +25,7 @@ namespace API.Controllers
         public async Task<ActionResult> AddLike([FromRoute] string username)
         {
             var sourceUserId = User.GetUserId();
-            var likedUser = await _userRepository.GetUserByUsernameAsync(username);
+            var likedUser = await _userRepository.GetUserByUserNameAsync(username);
             var SourceUser = await _likesRepository.GetUserWithLikes(sourceUserId);
 
             if (likedUser == null)

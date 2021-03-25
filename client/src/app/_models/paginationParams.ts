@@ -40,3 +40,12 @@ export class LikesParams extends PaginationParams {
         this.predicate = predicate;
     }
 }
+
+export class MessageParams extends PaginationParams {
+    container: string;
+
+    constructor(container: string) {
+        super();
+        this.container = container;
+    }
+}

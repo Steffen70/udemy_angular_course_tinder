@@ -1,14 +1,14 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { of } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { Member } from '../_models/member';
 import { MemberCacheMap } from '../_models/memberCacheMap';
-import { PaginatedResult } from '../_models/pagination';
 import { User } from '../_models/user';
-import { LikesParams, PaginationParams, UserParams } from '../_models/paginationParams';
+import { LikesParams, UserParams } from '../_models/paginationParams';
 import { AccountService } from './account.service';
+import { getPaginatiedResult } from './paginationHelper';
 
 @Injectable({
   providedIn: 'root'
@@ -28,20 +28,6 @@ export class MembersService {
     });
   }
 
-  private getPaginatiedResult<T>(url: string, paginationParams: PaginationParams) {
-    const paginatedResult = new PaginatedResult<T>();
-    let params = paginationParams.getPaginationHeaders();
-
-    return this.http.get<T>(url, { observe: 'response', params }).pipe(
-      map(response => {
-        paginatedResult.result = response.body
-        var paginationHeaders = response.headers.get('Pagination');
-        if (paginationHeaders != null)
-          paginatedResult.pagiantion = JSON.parse(paginationHeaders);
-        return paginatedResult;
-      })
-    );
-  }
 
   getLikesParams() {
     return this.likesParams;
@@ -68,7 +54,7 @@ export class MembersService {
     var cachedData = this.memberCache.get(this.userParams.getIdentifier());
     if (cachedData) return of(cachedData);
 
-    return this.getPaginatiedResult<Member[]>(`${this.baseUrl}users`, this.userParams).pipe(
+    return getPaginatiedResult<Member[]>(`${this.baseUrl}users`, this.http, this.userParams).pipe(
       map(memberArr => {
         this.memberCache.set(this.userParams.getIdentifier(), memberArr);
         return memberArr;
@@ -104,6 +90,6 @@ export class MembersService {
   }
 
   getLikes() {
-    return this.getPaginatiedResult<Partial<Member[]>>(`${this.baseUrl}likes`, this.likesParams)
+    return getPaginatiedResult<Partial<Member[]>>(`${this.baseUrl}likes`, this.http, this.likesParams)
   }
 }
