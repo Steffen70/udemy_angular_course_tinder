@@ -13,6 +13,7 @@ export class MessagesComponent implements OnInit {
   messages: Message[];
   pagination: Pagination;
   messageParams: MessageParams;
+  loadingFlag = false;
 
   constructor(private messageService: MessageService) {
     this.messageParams = this.messageService.getMessageParams();
@@ -22,10 +23,17 @@ export class MessagesComponent implements OnInit {
     this.loadMessages();
   }
 
+  lastRequest: string;
   loadMessages() {
+    this.loadingFlag = true;
+
+    if (this.lastRequest !== (this.lastRequest = this.messageParams.container))
+      this.messageParams = new MessageParams(this.lastRequest);
+
     this.messageService.setMessageParams(this.messageParams);
+
     this.messageService.getMessages().subscribe(response =>
-      [this.messages, this.pagination] = [response.result, response.pagiantion]);
+      [this.messages, this.pagination, this.loadingFlag] = [response.result, response.pagiantion, false]);
   }
 
   pageChanged(event: any) {

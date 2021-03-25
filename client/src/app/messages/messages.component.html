@@ -41,7 +41,8 @@
             <th style="width: 20%">Sent / Received</th>
             <th style="width: 20%">Message</th>
         </tr>
-        <tr *ngFor="let message of messages"
+        <tr [hidden]="loadingFlag"
+            *ngFor="let message of messages"
             routerLink="{{messageParams.container === 'Outbox' 
                 ? '/members/' + message.recipientUserName 
                 : '/members/' + message.senderUserName}}"
@@ -73,6 +74,7 @@
     <pagination [totalItems]="pagination.totalItems"
                 [itemsPerPage]="pagination.itemsPerPage"
                 [(ngModel)]="pagination.pageNumber"
-                (pageChanged)="pageChanged($event)">
+                (pageChanged)="pageChanged($event)"
+                [hidden]="loadingFlag">
     </pagination>
 </div>
