@@ -6,6 +6,7 @@ import { NgxGalleryOptions, NgxGalleryImage, NgxGalleryAnimation } from '@kolkov
 import { TabDirective, TabsetComponent } from 'ngx-bootstrap/tabs';
 import { MessageService } from 'src/app/_services/message.service';
 import { Message } from 'src/app/_models/message';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-member-detail',
@@ -20,7 +21,7 @@ export class MemberDetailComponent implements OnInit {
   galleryImages: NgxGalleryImage[];
   activeTab: TabDirective;
 
-  constructor(private membersService: MembersService, private route: ActivatedRoute, private messageService: MessageService) { }
+  constructor(private membersService: MembersService, private route: ActivatedRoute, private messageService: MessageService, private toastr: ToastrService) { }
 
   ngOnInit(): void {
     this.route.data.subscribe(data => this.member = data.member);
@@ -52,6 +53,11 @@ export class MemberDetailComponent implements OnInit {
     }
 
     return imageUrls;
+  }
+
+  addLike(member: Member) {
+    this.membersService.addLike(member.userName)
+      .subscribe(() => this.toastr.success(`You have liked ${member.knownAs}`))
   }
 
   loadMessages() {

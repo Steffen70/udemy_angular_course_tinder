@@ -51,6 +51,6 @@
     margin-top: -3px;
     background-color: var(--white);
     border: 0;
-    border-top: 1px solid var(--light);
+    /*border-top: 1px solid var(--secondary);*/
     padding: 15px 0;
 }
