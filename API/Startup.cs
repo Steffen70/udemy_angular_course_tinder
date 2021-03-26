@@ -2,9 +2,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Microsoft.Extensions.Hosting;
 
 using API.Extensions;
 using API.Middleware;
@@ -14,8 +13,10 @@ namespace API
     public class Startup
     {
         private readonly IConfiguration _config;
-        public Startup(IConfiguration config)
+        private readonly IWebHostEnvironment _env;
+        public Startup(IConfiguration config, IWebHostEnvironment env)
         {
+            _env = env;
             _config = config;
         }
 
@@ -26,7 +27,7 @@ namespace API
 
             services.AddCors();
 
-            services.AddIdentityServices(_config);
+            services.AddIdentityServices(_config, _env);
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
@@ -36,7 +37,7 @@ namespace API
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app)
         {
             app.UseMiddleware<ExceptionMiddleware>();
 
@@ -44,7 +45,8 @@ namespace API
 
             app.UseRouting();
 
-            app.UseCors(policy => policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:4200"));
+            if (_env.IsDevelopment())
+                app.UseCors(policy => policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:4200"));
 
             app.UseAuthentication();
 
