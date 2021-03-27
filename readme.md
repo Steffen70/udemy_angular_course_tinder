@@ -18,6 +18,7 @@ $ npm install
 
 + Create an `appsettings.json` file
 + Add your [Cloudinary](https://cloudinary.com/) configuration
++ Set the `AdminPassword`
 
 ```json
 {
