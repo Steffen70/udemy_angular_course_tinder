@@ -33,6 +33,19 @@ $ npm install
     "ApiKey": "",
     "ApiSecret": ""
   },
+  "ApplicationSettings": {
+    "Roles": [
+      "Member",
+      "Moderator",
+      "Admin"
+    ],
+    "AdminPassword": "",
+    "AdminRoles": [
+      "Admin",
+      "Moderator"
+    ],
+    "MemberRole": "Member"
+  },
   "AllowedHosts": "*"
 }
 ```
