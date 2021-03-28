@@ -20,9 +20,7 @@ namespace API
                 var services = scope.ServiceProvider;
                 try
                 {
-                    var seedService = services.GetRequiredService<SeedService>();
-                    await seedService.CreateDatabaseAsync(); 
-                    await seedService.SeedUsersIfDevelopmentAsync();
+                    await services.GetRequiredService<SeedService>().SeedData();
                 }
                 catch (Exception ex)
                 {

@@ -30,11 +30,18 @@ namespace API.Services
             _userManager = userManager;
         }
 
-        public async Task CreateDatabaseAsync()
+        public async Task SeedData()
+        {
+            var init = await CreateDatabaseAsync();
+            if (init && _env.IsDevelopment())
+                await SeedUsersAsync();
+        }
+
+        private async Task<bool> CreateDatabaseAsync()
         {
             await _context.Database.MigrateAsync();
 
-            if (await _userManager.Users.AnyAsync()) return;
+            if (await _userManager.Users.AnyAsync()) return false;
 
             var roles = _config.Value.Roles.ToList().Select(r => new AppRole { Name = r });
 
@@ -48,12 +55,12 @@ namespace API.Services
 
             await _userManager.CreateAsync(admin, _config.Value.AdminPassword);
             await _userManager.AddToRolesAsync(admin, _config.Value.AdminRoles);
+
+            return true;
         }
 
-        public async Task SeedUsersIfDevelopmentAsync()
+        private async Task SeedUsersAsync()
         {
-            if (!_env.IsDevelopment()) return;
-
             var userData = await System.IO.File.ReadAllTextAsync("Data/UserSeedData.json");
             var users = JsonSerializer.Deserialize<List<AppUser>>(userData);
 
