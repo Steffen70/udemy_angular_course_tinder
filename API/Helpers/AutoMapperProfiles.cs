@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using API.DTOs;
 using API.Entities;
@@ -29,6 +30,8 @@ namespace API.Helpers
             CreateMap<UserParams, UserHeader>();
             CreateMap<LikesParams, LikesHeader>();
             CreateMap<MessageParams, MessageHeader>();
+
+            CreateMap<DateTime, DateTime>().ConvertUsing(d => DateTime.SpecifyKind(d, DateTimeKind.Utc));
         }
     }
 }
