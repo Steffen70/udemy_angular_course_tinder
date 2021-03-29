@@ -17,11 +17,13 @@ namespace API.Controllers
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
         private readonly IPhotoService _photoService;
-        public UsersController(IUserRepository userRepository, IMapper mapper, IPhotoService photoService)
+        private readonly IUnitOfWork _unitOfWork;
+        public UsersController(IUnitOfWork unitOfWork, IMapper mapper, IPhotoService photoService)
         {
+            _unitOfWork = unitOfWork;
             _photoService = photoService;
             _mapper = mapper;
-            _userRepository = userRepository;
+            _userRepository = unitOfWork.UserRepository;
         }
 
         [HttpGet]
@@ -50,7 +52,7 @@ namespace API.Controllers
             _mapper.Map(memberUpdateDto, user);
 
             _userRepository.Update(user);
-            if (!await _userRepository.SaveAllAsync()) return BadRequest();
+            if (!await _unitOfWork.Complete()) return BadRequest();
 
             return _mapper.Map<MemberDto>(user);
         }
@@ -74,7 +76,7 @@ namespace API.Controllers
 
             user.Photos.Add(photo);
 
-            if (await _userRepository.SaveAllAsync())
+            if (await _unitOfWork.Complete())
             {
                 var photoDto = _mapper.Map<PhotoDto>(photo);
                 return CreatedAtRoute("GetUser", new { username = user.UserName }, photoDto);
@@ -96,7 +98,7 @@ namespace API.Controllers
 
             photo.IsMain = true;
 
-            if (await _userRepository.SaveAllAsync()) return NoContent();
+            if (await _unitOfWork.Complete()) return NoContent();
 
             return BadRequest("Failed to set main photo");
         }
@@ -120,7 +122,7 @@ namespace API.Controllers
 
             user.Photos.Remove(photo);
 
-            if (await _userRepository.SaveAllAsync()) return Ok();
+            if (await _unitOfWork.Complete()) return Ok();
 
             return BadRequest("Failed to delete the photo");
         }

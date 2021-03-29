@@ -14,11 +14,13 @@ namespace API.Controllers
         private readonly ILikesRepository _likesRepository;
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
-        public LikesController(IUserRepository userRepository, ILikesRepository likesRepository, IMapper mapper)
+        private readonly IUnitOfWork _unitOfWork;
+        public LikesController(IUnitOfWork unitOfWork, IMapper mapper)
         {
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
-            _userRepository = userRepository;
-            _likesRepository = likesRepository;
+            _userRepository = unitOfWork.UserRepository;
+            _likesRepository = unitOfWork.LikesRepository;
         }
 
         [HttpPost("{username}")]
@@ -47,7 +49,7 @@ namespace API.Controllers
 
             SourceUser.LikedUsers.Add(userLike);
 
-            if (await _userRepository.SaveAllAsync())
+            if (await _unitOfWork.Complete())
                 return Ok();
 
             return BadRequest($"Failed to like user '{username}'");

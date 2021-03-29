@@ -86,15 +86,9 @@ namespace API.Data
             if (unreadMessages.Any())
             {
                 unreadMessages.ForEach(m => m.DateRead = DateTime.UtcNow);
-                await _context.SaveChangesAsync();
             }
 
             return _mapper.Map<IEnumerable<MessageDto>>(messages);
-        }
-
-        public async Task<bool> SaveAllAsync()
-        {
-            return await _context.SaveChangesAsync() > 0;
         }
     }
 }
