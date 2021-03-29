@@ -41,6 +41,9 @@ namespace API.Services
         {
             await _context.Database.MigrateAsync();
 
+            if(await _context.Connections.AnyAsync())
+                await _context.Database.ExecuteSqlRawAsync("DELETE FROM Connections");
+
             if (await _userManager.Users.AnyAsync()) return false;
 
             var roles = _config.Value.Roles.ToList().Select(r => new AppRole { Name = r });
