@@ -54,7 +54,8 @@ namespace API.Data
 
         public async Task<PagedList<MessageDto>> GetMessagesForUser(MessageParams messageParams)
         {
-            var query = _context.Messages.OrderByDescending(m => m.MessageSent).AsQueryable();
+            var query = _context.Messages.OrderByDescending(m => m.MessageSent)
+                .ProjectTo<MessageDto>(_mapper.ConfigurationProvider).AsQueryable();
 
             query = messageParams.Container switch
             {
@@ -63,32 +64,27 @@ namespace API.Data
                 _ => query.Where(u => u.RecipientUserName == messageParams.UserName && u.RecipientDeleted == false && u.DateRead == null)
             };
 
-            var messages = query.ProjectTo<MessageDto>(_mapper.ConfigurationProvider);
-
-            return await PagedList<MessageDto>.CreateAsync(messages, messageParams.CurrentPage, messageParams.ItemsPerPage);
+            return await PagedList<MessageDto>.CreateAsync(query, messageParams.CurrentPage, messageParams.ItemsPerPage);
         }
 
         public async Task<IEnumerable<MessageDto>> GetMessageThread(string currentUserName, string recipientUserName)
         {
-            var messages = await _context.Messages
-            .Include(u => u.Sender).ThenInclude(s => s.Photos)
-            .Include(u => u.Recipient).ThenInclude(r => r.Photos)
+            var messages = _context.Messages
             .Where(m =>
                 m.RecipientDeleted == false
                 && m.RecipientUserName == currentUserName && m.SenderUserName == recipientUserName
                 || m.RecipientUserName == recipientUserName && m.SenderUserName == currentUserName
                 && m.SenderDeleted == false)
                 .OrderBy(m => m.MessageSent)
-                .ToListAsync();
+                .AsQueryable();
+
 
             var unreadMessages = messages.Where(m => m.DateRead == null && m.RecipientUserName == currentUserName).ToList();
 
             if (unreadMessages.Any())
-            {
                 unreadMessages.ForEach(m => m.DateRead = DateTime.UtcNow);
-            }
 
-            return _mapper.Map<IEnumerable<MessageDto>>(messages);
+            return await messages.ProjectTo<MessageDto>(_mapper.ConfigurationProvider).ToListAsync();
         }
     }
 }

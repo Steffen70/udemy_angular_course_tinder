@@ -69,7 +69,12 @@ namespace API.Controllers
 
         [HttpGet("thread/{username}")]
         public async Task<ActionResult<IEnumerable<MessageDto>>> GetMessageThread([FromRoute] string username)
-        => Ok(await _messageRepository.GetMessageThread(User.GetUserName(), username));
+        {
+            var messageThread = await _messageRepository.GetMessageThread(User.GetUserName(), username);
+            if (_unitOfWork.HasChanges())
+                await _unitOfWork.Complete();
+            return Ok(messageThread);
+        }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteMessage([FromRoute] int id)

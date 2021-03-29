@@ -34,7 +34,6 @@ namespace API.Data
         {
             var query = _context.Users
                 .AsQueryable()
-                .Include(u => u.Photos)
                 .Where(u => u.UserName != userParams.CurrentUsername)
                 .Where(u => u.Gender == userParams.Gender)
                 .Where(u => u.DateOfBirth <= DateTime.Today.AddYears(-userParams.MinAge))
@@ -47,8 +46,8 @@ namespace API.Data
                 _ => query.OrderByDescending(u => u.LastActive),
             };
 
-            return _mapper.Map<PagedList<MemberDto>>(
-                await PagedList<AppUser>.CreateAsync(query, userParams.CurrentPage, userParams.ItemsPerPage));
+            return await PagedList<MemberDto>.CreateAsync(query
+                .ProjectTo<MemberDto>(_mapper.ConfigurationProvider), userParams.CurrentPage, userParams.ItemsPerPage);
         }
 
         public async Task<AppUser> GetUserByIdAsync(int id)
