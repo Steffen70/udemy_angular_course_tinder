@@ -22,8 +22,12 @@ export class PresenceService {
   createHubConnection(user: User) {
     this.hubConnection = startHubConnection(user, `${this.hubUrl}presence`);
 
-    this.hubConnection.on('UserIsOnline', username => this.toastr.info(`${username} has connected`));
-    this.hubConnection.on('UserIsOffline', username => this.toastr.warning(`${username} has disconnected`));
+    this.hubConnection.on('UserIsOnline', username => this.onlineUsers$.pipe(take(1))
+      .subscribe(usernames => this.onlineUserSource.next([...usernames, username])));
+
+    this.hubConnection.on('UserIsOffline', username => this.onlineUsers$.pipe(take(1))
+      .subscribe(usernames => this.onlineUserSource.next([...usernames
+        .filter(x => x != username)])));
 
     this.hubConnection.on('GetOnlineUsers', (arr: string[]) => this.onlineUserSource.next(arr));
 

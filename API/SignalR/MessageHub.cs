@@ -71,15 +71,15 @@ namespace API.SignalR
                 Content = createMessageDto.Content
             };
 
-            var groupName = GetGroupName(sender.UserName, recipient.UserName);
+            var groupName = GetGroupName(userName, recipientUserName);
 
             var group = await _messageRepository.GetMessageGroup(groupName);
 
-            if (group.Connections.Any(x => x.UserName == recipient.UserName))
+            if (group.Connections.Any(x => x.UserName == recipientUserName))
                 message.DateRead = DateTime.UtcNow;
             else
             {
-                var connections = await _tracker.GetConnectionsForUser(recipient.UserName);
+                var connections = await _tracker.GetConnectionsForUser(recipientUserName);
                 if (connections != null)
                     await _presenceHub.Clients.Clients(connections).SendAsync("NewMessageReceived",
                         new { userName = sender.UserName, knownAs = sender.KnownAs });

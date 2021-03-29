@@ -34,11 +34,11 @@ namespace API.Data
         {
             var query = _context.Users
                 .AsQueryable()
+                .Include(u => u.Photos)
                 .Where(u => u.UserName != userParams.CurrentUsername)
                 .Where(u => u.Gender == userParams.Gender)
                 .Where(u => u.DateOfBirth <= DateTime.Today.AddYears(-userParams.MinAge))
                 .Where(u => userParams.MaxAge.HasValue ? u.DateOfBirth >= DateTime.Today.AddYears(-userParams.MaxAge.Value - 1) : true)
-                .ProjectTo<MemberDto>(_mapper.ConfigurationProvider)
                 .AsNoTracking();
 
             query = userParams.OrderBy switch
@@ -47,7 +47,8 @@ namespace API.Data
                 _ => query.OrderByDescending(u => u.LastActive),
             };
 
-            return await PagedList<MemberDto>.CreateAsync(query, userParams.CurrentPage, userParams.ItemsPerPage);
+            return _mapper.Map<PagedList<MemberDto>>(
+                await PagedList<AppUser>.CreateAsync(query, userParams.CurrentPage, userParams.ItemsPerPage));
         }
 
         public async Task<AppUser> GetUserByIdAsync(int id)
