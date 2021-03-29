@@ -5,6 +5,8 @@ import { ToastrService } from 'ngx-toastr';
 import { User } from '../_models/user';
 import { BehaviorSubject } from 'rxjs';
 import { startHubConnection } from './signalrHelper';
+import { take } from 'rxjs/operators';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +17,7 @@ export class PresenceService {
   private onlineUserSource = new BehaviorSubject<string[]>([]);
   onlineUsers$ = this.onlineUserSource.asObservable();
 
-  constructor(private toastr: ToastrService) { }
+  constructor(private toastr: ToastrService, private router: Router) { }
 
   createHubConnection(user: User) {
     this.hubConnection = startHubConnection(user, `${this.hubUrl}presence`);
@@ -24,6 +26,10 @@ export class PresenceService {
     this.hubConnection.on('UserIsOffline', username => this.toastr.warning(`${username} has disconnected`));
 
     this.hubConnection.on('GetOnlineUsers', (arr: string[]) => this.onlineUserSource.next(arr));
+
+    this.hubConnection.on('NewMessageReceived', ({ userName, knownAs }) =>
+      this.toastr.info(`${knownAs} has sent you a new message!`).onTap.pipe(take(1))
+        .subscribe(() => this.router.navigateByUrl(`/members/${userName}?tab=3`)));
   }
 
   stopHubConnection() {
