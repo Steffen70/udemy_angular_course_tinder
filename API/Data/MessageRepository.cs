@@ -25,6 +25,11 @@ namespace API.Data
         public void AddGroup(Group group)
         => _context.Groups.Add(group);
 
+        public async Task<Group> GetGroupForConnection(string connectionId)
+        => await _context.Groups.Include(c => c.Connections)
+            .Where(c => c.Connections.Any(x => x.ConnectionId == connectionId))
+            .FirstOrDefaultAsync();
+
         public async Task<Connection> GetConnection(string connectionId)
         => await _context.Connections.FindAsync(connectionId);
 

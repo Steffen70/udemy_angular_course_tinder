@@ -9,6 +9,8 @@ import { User } from '../_models/user';
 import { startHubConnection } from './signalrHelper';
 import { BehaviorSubject } from 'rxjs';
 import { take } from 'rxjs/operators';
+import { group } from '@angular/animations';
+import { Group } from '../_models/group';
 
 @Injectable({
   providedIn: 'root'
@@ -27,7 +29,20 @@ export class MessageService {
     this.hubConnection = startHubConnection(user, `${this.hubUrl}message?user=${otherUsername}`);
 
     this.hubConnection.on('ReceiveMessageThread', m => this.messageThreadSource.next(m));
-    this.hubConnection.on('NewMessage', m => this.messageThread$.pipe(take(1)).subscribe(arr => this.messageThreadSource.next([...arr, m])));
+
+    this.hubConnection.on('NewMessage', m => this.messageThread$.pipe(take(1))
+      .subscribe(arr => this.messageThreadSource.next([...arr, m])));
+
+    this.hubConnection.on('UpdatedGroup', (g: Group) => {
+      if (g.connections.some(x => x.userName === otherUsername))
+        this.messageThread$.pipe(take(1)).subscribe(m => {
+          m.forEach(msg => {
+            if (!msg.dateRead)
+              msg.dateRead = new Date(Date.now())
+          })
+          this.messageThreadSource.next([...m]);
+        });
+    });
   }
 
   stopHubConnection() {
