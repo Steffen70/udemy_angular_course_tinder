@@ -36,5 +36,15 @@ namespace API.Helpers.Pagination
 
             return new PagedList<T>(items, count, pageNumber, itemsPerPage);
         }
+
+        public static PagedList<T> Create(IEnumerable<T> source, int pageNumber, int itemsPerPage)
+        {
+            var count = source.Count();
+            var items = source
+                .Skip((pageNumber - 1) * itemsPerPage)
+                .Take(itemsPerPage).AsEnumerable();
+
+            return new PagedList<T>(items, count, pageNumber, itemsPerPage);
+        }
     }
 }

@@ -9,6 +9,7 @@ using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using API.Helpers.Pagination;
 using System;
+using Z.EntityFramework.Plus;
 
 namespace API.Data
 {
@@ -34,6 +35,7 @@ namespace API.Data
         {
             var query = _context.Users
                 .AsQueryable()
+                .IncludeFilter(u => u.Photos.Where(p => p.IsApproved))
                 .Where(u => u.UserName != userParams.CurrentUsername)
                 .Where(u => u.Gender == userParams.Gender)
                 .Where(u => u.DateOfBirth <= DateTime.Today.AddYears(-userParams.MinAge))
@@ -46,8 +48,10 @@ namespace API.Data
                 _ => query.OrderByDescending(u => u.LastActive),
             };
 
-            return await PagedList<MemberDto>.CreateAsync(query
-                .ProjectTo<MemberDto>(_mapper.ConfigurationProvider), userParams.CurrentPage, userParams.ItemsPerPage);
+            var userList = await query.ToListAsync();
+            var memberList = _mapper.Map<IEnumerable<MemberDto>>(userList);
+
+            return PagedList<MemberDto>.Create(memberList, userParams.CurrentPage, userParams.ItemsPerPage);
         }
 
         public async Task<AppUser> GetUserByIdAsync(int id)

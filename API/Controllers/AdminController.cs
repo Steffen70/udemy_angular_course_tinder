@@ -1,6 +1,9 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using API.DTOs;
 using API.Entities;
+using API.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -11,8 +14,12 @@ namespace API.Controllers
     public class AdminController : BaseApiController
     {
         private readonly UserManager<AppUser> _userManager;
-        public AdminController(UserManager<AppUser> userManager)
+        private readonly IPhotoRepository _photoRepository;
+        private readonly IUnitOfWork _unitOfWork;
+        public AdminController(UserManager<AppUser> userManager, IUnitOfWork unitOfWork)
         {
+            _unitOfWork = unitOfWork;
+            _photoRepository = unitOfWork.PhotoRepository;
             _userManager = userManager;
         }
 
@@ -59,9 +66,27 @@ namespace API.Controllers
 
         [Authorize(Policy = "ModeratorPhotoRole")]
         [HttpGet("photos-to-moderate")]
-        public ActionResult GetPhotosForModeration()
+        public async Task<ActionResult<IEnumerable<PhotoDto>>> GetPhotosForModeration()
+        => Ok(await _photoRepository.GetPhotosToApprove());
+
+        [Authorize(Policy = "ModeratorPhotoRole")]
+        [HttpPut("photo-approve/{photoId}")]
+        public async Task<ActionResult> ApprovePhoto(int? photoId)
         {
-            return Ok("Admins or moderators can see this");
+            var photo = photoId.HasValue ? await _photoRepository.ApprovePhotoAsync(photoId.Value) : null;
+
+            if (photo is null)
+                return BadRequest("This photo cannot be found");
+
+            await _photoRepository.SetPhotoAsMain(photo);
+
+            if (_unitOfWork.HasChanges() && await _unitOfWork.Complete())
+                return Ok();
+
+            if (photo is not null && photo.IsApproved)
+                return BadRequest("This photo is already approved");
+
+            return BadRequest($"The photo '{photoId.Value}' could not be approved");
         }
     }
 }

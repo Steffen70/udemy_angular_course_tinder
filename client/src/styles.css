@@ -54,3 +54,16 @@
     /*border-top: 1px solid var(--secondary);*/
     padding: 15px 0;
 }
+
+.ngx-gallery-thumbnail {
+    border: none !important;
+}
+
+.ngx-gallery-thumbnails .ngx-gallery-thumbnail {
+    border-bottom: 4px solid var(--white) !important;
+}
+
+.ngx-gallery-thumbnails>.ngx-gallery-thumbnail:hover,
+.ngx-gallery-thumbnails>.ngx-gallery-thumbnail.ngx-gallery-active {
+    border-bottom: 4px solid var(--primary) !important;
+}
