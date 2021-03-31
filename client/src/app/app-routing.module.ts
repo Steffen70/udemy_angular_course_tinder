@@ -63,11 +63,6 @@ const routes: Routes = [
   },
 
   {
-    path: 'errors',
-    component: TestErrorsComponent
-  },
-
-  {
     path: 'not-found',
     component: NotFoundComponent
   },
