@@ -27,4 +27,8 @@ export class AdminService {
   approvePhoto(photoId) {
     return this.http.put(`${this.baseUrl}admin/photo-approve/${photoId}`, {});
   }
+
+  rejectPhoto(photoId) {
+    return this.http.delete(`${this.baseUrl}users/delete-photo/${photoId}`);
+  }
 }

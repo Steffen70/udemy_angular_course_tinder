@@ -1,8 +1,15 @@
 <div class="row d-flex justify-content-center align-items-center border-top pt-4">
     <ngx-gallery [options]="galleryOptions"
                  [images]="galleryImages"></ngx-gallery>
-    <button (click)="approvePhoto()"
-            class="ml-5 btn btn-lg btn-info"
-            [disabled]="photos.length == 0">Approve
-    </button>
+    <div class="btn-group">
+        <button (click)="approvePhoto()"
+                class="ml-5 btn btn-lg btn-info"
+                [disabled]="photos.length == 0">Approve
+        </button>
+
+        <button (click)="rejectPhoto()"
+                class="btn btn-lg btn-danger"
+                [disabled]="photos.length == 0">Reject
+        </button>
+    </div>
 </div>

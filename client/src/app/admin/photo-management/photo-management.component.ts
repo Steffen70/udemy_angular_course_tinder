@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgxGalleryAnimation, NgxGalleryComponent, NgxGalleryImage, NgxGalleryOptions } from '@kolkov/ngx-gallery';
+import { Observable } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { Photo } from 'src/app/_models/photo';
 import { AdminService } from 'src/app/_services/admin.service';
@@ -57,18 +58,28 @@ export class PhotoManagementComponent implements OnInit {
   }
 
   approvePhoto() {
-    this.getCurrentPhoto().forEach(p => this.adminService.approvePhoto(p.id).subscribe(() => {
+    const p = this.getCurrentPhoto();
+    this.adminService.approvePhoto(p.id).subscribe(this.GetOnCompleteFunc(p));
+  }
+
+  rejectPhoto() {
+    const p = this.getCurrentPhoto();
+    this.adminService.rejectPhoto(p.id).subscribe(this.GetOnCompleteFunc(p));
+  }
+
+  private GetOnCompleteFunc(p: Photo) {
+    return () => {
       const index = this.photos.indexOf(p);
       if (this.photos.length > 1 && index > -1)
         this.photos.splice(index, 1);
       else
         this.photos = []
       this.setImages();
-    }));
+    }
   }
 
   getCurrentPhoto() {
     let current = this.galleryImages[this.ngxGalleryComponent.selectedIndex];
-    return this.photos.filter(p => p.url === current?.small)
+    return this.photos.find(p => p.url === current?.small)
   }
 }
