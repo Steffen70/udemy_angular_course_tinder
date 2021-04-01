@@ -5,7 +5,7 @@ export abstract class PaginationParams {
     minAge = 18;
     maxAge = 99;
     currentPage = 1;
-    itemsPerPage = 4;
+    itemsPerPage = 12;
 
     public getIdentifier() {
         return Object.values(this).join('-');

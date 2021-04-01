@@ -7,7 +7,7 @@
 
 
         <ul class="list-inline photo-icons animate text-center">
-            <li class="list-inline-item"><button class="btn btn-sm btn-warning"
+            <li class="list-inline-item"><button class="btn btn-sm btn-success"
                         (click)="setMainPhoto(photo)"
                         [disabled]="!photo.isApproved || photo.isMain"
                         title="{{!photo.isApproved ? 'Waiting for approval' : ''}}">
@@ -92,7 +92,7 @@
                     <span class="fa fa-upload"></span> Upload all
                 </button>
                 <button type="button"
-                        class="btn btn-warning btn-s"
+                        class="btn btn-info btn-s"
                         (click)="uploader.cancelAll()"
                         [disabled]="!uploader.isUploading">
                     <span class="fa fa-ban"></span> Cancel all

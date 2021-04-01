@@ -24,11 +24,11 @@ namespace API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddApplicationServices(_config);
+            services.AddApplicationServices(_config, _env);
 
             services.AddCors();
 
-            services.AddIdentityServices(_config, _env);
+            services.AddIdentityServices(_config);
 
             services.AddControllers();
             services.AddSwaggerGen(c =>

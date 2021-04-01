@@ -5,8 +5,8 @@ img.img-thumbnail {
 }
 
 .nv-file-over {
-    border-color: var(--orange);
-    color: var(--orange);
+    border-color: var(--primary);
+    color: var(--primary);
 }
 
 input[type=file] {

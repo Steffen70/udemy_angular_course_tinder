@@ -10,6 +10,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using API.Data;
+using System;
 
 namespace API.Services
 {
@@ -17,11 +18,11 @@ namespace API.Services
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly RoleManager<AppRole> _roleManager;
-        private readonly IOptions<ApplicationSettings> _config;
+        private readonly IOptions<RoleConfiguration> _config;
         private readonly IWebHostEnvironment _env;
         private readonly DataContext _context;
         public SeedService(UserManager<AppUser> userManager, RoleManager<AppRole> roleManager,
-            IOptions<ApplicationSettings> config, IWebHostEnvironment env, DataContext context)
+            IOptions<RoleConfiguration> config, IWebHostEnvironment env, DataContext context)
         {
             _context = context;
             _env = env;
@@ -41,7 +42,7 @@ namespace API.Services
         {
             await _context.Database.MigrateAsync();
 
-            if(await _context.Connections.AnyAsync())
+            if (await _context.Connections.AnyAsync())
                 await _context.Database.ExecuteSqlRawAsync("DELETE FROM Connections");
 
             if (await _userManager.Users.AnyAsync()) return false;
@@ -56,7 +57,7 @@ namespace API.Services
                 UserName = "admin",
             };
 
-            await _userManager.CreateAsync(admin, _config.Value.AdminPassword);
+            await _userManager.CreateAsync(admin, Environment.GetEnvironmentVariable("ADMIN_PASSWORD"));
             await _userManager.AddToRolesAsync(admin, _config.Value.AdminRoles);
 
             return true;

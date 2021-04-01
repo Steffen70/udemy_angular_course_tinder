@@ -16,37 +16,18 @@ $ npm install
 
 ## Configuration
 
-+ Create an `appsettings.json` file
++ Set the connection string in `appsettings.json` or add `DATINGAPP_CONNECTION_STRING` enviroment variable
 + Add your [Cloudinary](https://cloudinary.com/) configuration
-+ Set the `AdminPassword`
++ Set the `ADMIN_PASSWORD` enviroment variable
++ Add a `TokenKey` to your configuration
 
 ```json
 {
-  "Logging": {
-    "LogLevel": {
-      "Default": "Information",
-      "Microsoft": "Warning",
-      "Microsoft.Hosting.Lifetime": "Information"
-    }
-  },
   "CloudinarySettings": {
     "CloudName": "",
     "ApiKey": "",
     "ApiSecret": ""
   },
-  "ApplicationSettings": {
-    "Roles": [
-      "Member",
-      "Moderator",
-      "Admin"
-    ],
-    "AdminPassword": "",
-    "AdminRoles": [
-      "Admin",
-      "Moderator"
-    ],
-    "MemberRole": "Member"
-  },
-  "AllowedHosts": "*"
+  "TokenKey": ""
 }
 ```

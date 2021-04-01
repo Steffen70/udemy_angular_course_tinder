@@ -23,9 +23,9 @@ namespace API.Controllers
         private readonly IMapper _mapper;
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
-        private readonly IOptions<ApplicationSettings> _config;
+        private readonly IOptions<RoleConfiguration> _config;
         public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager,
-        ITokenService tokenService, IMapper mapper, IOptions<ApplicationSettings> config)
+        ITokenService tokenService, IMapper mapper, IOptions<RoleConfiguration> config)
         {
             _config = config;
             _signInManager = signInManager;
