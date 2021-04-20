@@ -16,9 +16,9 @@ $ npm install
 
 ## Configuration
 
-+ Set the connection string in `appsettings.json` or add `DATINGAPP_CONNECTION_STRING` enviroment variable
++ Set the connection string in `appsettings.json` or add `DatingApp_DatingAppConnectionString` enviroment variable
 + Add your [Cloudinary](https://cloudinary.com/) configuration
-+ Set the `ADMIN_PASSWORD` enviroment variable
++ Set the `DatingApp_AdminPassword` enviroment variable
 + Add a `TokenKey` to your configuration
 
 ```json
@@ -28,6 +28,8 @@ $ npm install
     "ApiKey": "",
     "ApiSecret": ""
   },
+  "DatingAppConnectionString": "Data source=datingapp.db",
+  "AdminPassword": "Welcome15!",
   "TokenKey": ""
 }
 ```

@@ -1,4 +1,3 @@
-using System;
 using API.Data;
 using API.Helpers;
 using API.Interfaces;
@@ -8,7 +7,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
 namespace API.Extensions
 {
@@ -25,14 +23,7 @@ namespace API.Extensions
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<LogUserActivity>();
             services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
-            services.AddDbContext<DataContext>(options =>
-            {
-                string connStr = env.IsDevelopment()
-                    ? config.GetConnectionString("DefaultConnection")
-                    : Environment.GetEnvironmentVariable("DATINGAPP_CONNECTION_STRING");
-
-                options.UseSqlite(connStr);
-            });
+            services.AddDbContext<DataContext>(options => options.UseSqlite(config["DatingAppConnectionString"]));
 
             return services;
         }

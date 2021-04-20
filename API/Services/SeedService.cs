@@ -10,7 +10,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using API.Data;
-using System;
+using Microsoft.Extensions.Configuration;
 
 namespace API.Services
 {
@@ -18,14 +18,16 @@ namespace API.Services
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly RoleManager<AppRole> _roleManager;
-        private readonly IOptions<RoleConfiguration> _config;
+        private readonly IOptions<RoleConfiguration> _roleConfig;
+        private readonly IConfiguration _config;
         private readonly IWebHostEnvironment _env;
         private readonly DataContext _context;
         public SeedService(UserManager<AppUser> userManager, RoleManager<AppRole> roleManager,
-            IOptions<RoleConfiguration> config, IWebHostEnvironment env, DataContext context)
+            IOptions<RoleConfiguration> roleConfig, IConfiguration config, IWebHostEnvironment env, DataContext context)
         {
             _context = context;
             _env = env;
+            _roleConfig = roleConfig;
             _config = config;
             _roleManager = roleManager;
             _userManager = userManager;
@@ -47,7 +49,7 @@ namespace API.Services
 
             if (await _userManager.Users.AnyAsync()) return false;
 
-            var roles = _config.Value.Roles.ToList().Select(r => new AppRole { Name = r });
+            var roles = _roleConfig.Value.Roles.ToList().Select(r => new AppRole { Name = r });
 
             foreach (var r in roles)
                 await _roleManager.CreateAsync(r);
@@ -57,8 +59,8 @@ namespace API.Services
                 UserName = "admin",
             };
 
-            await _userManager.CreateAsync(admin, Environment.GetEnvironmentVariable("ADMIN_PASSWORD"));
-            await _userManager.AddToRolesAsync(admin, _config.Value.AdminRoles);
+            await _userManager.CreateAsync(admin, _config["AdminPassword"]);
+            await _userManager.AddToRolesAsync(admin, _roleConfig.Value.AdminRoles);
 
             return true;
         }
@@ -74,7 +76,7 @@ namespace API.Services
             {
                 u.UserName = u.UserName.ToLower();
                 await _userManager.CreateAsync(u, "demo");
-                await _userManager.AddToRoleAsync(u, _config.Value.MemberRole);
+                await _userManager.AddToRoleAsync(u, _roleConfig.Value.MemberRole);
             }
         }
     }
